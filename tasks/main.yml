@@ -55,6 +55,7 @@
   args:
     executable: /bin/bash
   register: nvm_bin_dir
+  changed_when: false
 
 - name: Provide nvm bin dir fact
   set_fact:
