@@ -11,30 +11,32 @@ git, curl, build-essential, libssl-dev. Requirements are installed by the role.
 Role Variables
 --------------
 
-* `nvm_version` nvm version tag, or `HEAD`. Defaults to `0.33.1`
-* `nvm_node_version` Node.js version. Defaults to `6.10.0`
-* `nvm_install_path` nvm folder path. Defaults to `~/.nvm`
+* `nvm_version` nvm version tag, or `HEAD`.
+* `nvm_node_version` Node.js version.
+* `nvm_install_path` nvm folder path. Defaults to `~/.nvm`.
+
+Version default values can be found in `defaults/main.yml`.
 
 Dependencies
 ------------
 
-No depedencies.
+No dependencies.
 
 Example Playbook
 -------------------------
 
     - hosts: servers
       roles:
-        - role: stephdewit.nvm
-          nvm_version: 0.4.0
-          nvm_node_version: 0.10
+        - role: drunomics.nvm
+          nvm_version: 0.33.2
+          nvm_node_version: 6.10.*
 
 License
 -------
 
 BSD
 
-Author Information
+Credits
 ------------------
-
-Jarno Keskikangas
+This is role forked from Jarno Keskikangas (https://github.com/leonidas/ansible-nvm)
+and https://github.com/stephdewit/ansible-nvm.
