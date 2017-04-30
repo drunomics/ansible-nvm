@@ -1,0 +1,20 @@
+# The playbook requires a running container, see run-container.yml.
+---
+- hosts: all:&{{ limit_groups | default('container') }}
+  become: true
+
+  roles:
+    - self
+
+  post_tasks:
+  - name: Test using npm
+    shell: >
+      npm
+    tags: assert
+
+  - name: Check node version
+    shell: >
+      node --version
+    register: result
+    failed_when: result.stdout.find('v6.10') == -1
+    tags: assert

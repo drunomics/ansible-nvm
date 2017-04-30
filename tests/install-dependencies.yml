@@ -1,0 +1,27 @@
+# Playbook for installing all test dependencies.
+---
+- hosts: all:&{{ limit_groups | default('local') }}
+
+  vars:
+    role_meta: "{{ lookup('file', '../meta/main.yml')|from_yaml }}"
+
+  tasks:
+    - name: Install docker.py for ansible docker module
+      pip: name=docker-py state=present version=1.5.0
+      become: true
+      tags: docker-py
+
+    - name: Install dependencies from requirements.yml
+      shell: >
+        [ ! -f ../meta/requirements.yml ] || ansible-galaxy install -r ../meta/requirements.yml
+      register: result
+      changed_when: "'was installed successfully' in result.stdout"
+      tags: dependencies
+
+    - name: Install ansible role dependencies
+      shell: >
+        ansible-galaxy install {{ item.role }}
+        creates=roles/{{ item.role }}
+      with_items: role_meta.dependencies
+      when: role_meta.dependencies is defined
+      tags: dependencies
