@@ -15,23 +15,51 @@
     dest={{ nvm_install_path }}
     version={% if nvm_version!='HEAD' %}v{% endif %}{{ nvm_version }}
 
-- name: Source nvm in ~/.profile
+- name: Source nvm in ~/.bashrc
   lineinfile: >
-    dest=~/.profile
+    dest=~/.bashrc
     line=". {{ nvm_install_path }}/nvm.sh"
     create=yes
 
 - name: Install Node.js {{ nvm_node_version }}
-  shell: . ~/.profile && nvm install {{ nvm_node_version }}
+  shell: |
+    . {{ nvm_install_path }}/nvm.sh
+    nvm install {{ nvm_node_version }}
+  args:
+    executable: /bin/bash
   register: nvm_install_result
   changed_when: "'is already installed.' not in nvm_install_result.stderr"
 
 - name: Check if {{ nvm_node_version }} is the default Node.js version
-  shell: . ~/.profile && nvm ls --no-colors | grep -e 'default -> {{ nvm_node_version }}'
+  shell: |
+    . {{ nvm_install_path }}/nvm.sh
+    nvm ls --no-colors | grep -e 'default -> {{ nvm_node_version }}'
+  args:
+    executable: /bin/bash
   register: nvm_check_default
   changed_when: False
   failed_when: False
 
 - name: Set default Node.js version to {{ nvm_node_version }}
-  shell: . ~/.profile && nvm alias default {{ nvm_node_version }}
+  shell: |
+    . {{ nvm_install_path }}/nvm.sh
+    nvm alias default {{ nvm_node_version }}
+  args:
+    executable: /bin/bash
   when: nvm_check_default.rc != 0
+
+- name: Check nvm default bin dir
+  shell: |
+    . {{ nvm_install_path }}/nvm.sh
+    echo $NVM_BIN
+  args:
+    executable: /bin/bash
+  register: nvm_bin_dir
+
+- name: Provide nvm bin dir fact
+  set_fact:
+    nvm_bin_dir: "{{ nvm_bin_dir.stdout }}"
+
+- name: Register nvm default system-wide
+  include: system.yml
+  when: nvm_register_default_system_wide

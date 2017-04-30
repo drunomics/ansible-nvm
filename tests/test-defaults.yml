@@ -8,12 +8,15 @@
 
   post_tasks:
   - name: Test using npm
-    shell: >
-      npm
+    shell: |
+      export PATH={{ nvm_bin_dir }}:$PATH
+      npm --version
     tags: assert
+    register: output
 
   - name: Check node version
-    shell: >
+    shell: |
+      export PATH={{ nvm_bin_dir }}:$PATH
       node --version
     register: result
     failed_when: result.stdout.find('v6.10') == -1

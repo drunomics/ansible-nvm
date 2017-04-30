@@ -1,0 +1,15 @@
+---
+- name: Add nvm to default bashrc
+  lineinfile: >
+    dest="/etc/bash.bashrc" state=present regexp="nvm/nvm.sh"
+    line='. {{ nvm_install_path }}/nvm.sh'
+
+- name: Add nvm bin dir to PATH
+  lineinfile: >
+    dest=/etc/environment
+    state=present
+    backrefs=yes
+    regexp='PATH=(["]*)((?!.*?{{extra_path}}).*?)(["]*)$'
+    line="PATH=\1\2:{{extra_path}}\3"
+  vars:
+    extra_path: "{{ nvm_bin_dir }}"
