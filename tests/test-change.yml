@@ -1,0 +1,20 @@
+# The playbook requires a running container, see run-container.yml.
+---
+- hosts: all:&{{ limit_groups | default('container') }}
+  become: true
+
+  roles:
+    - role: self
+      nvm_node_version: "6.10"
+      tags: dependency
+    - role: self
+      nvm_node_version: "7"
+
+  post_tasks:
+  - name: Check node version is 7
+    shell: |
+      export PATH={{ nvm_bin_dir }}:$PATH
+      node --version
+    register: result
+    failed_when: result.stdout.find('v7.') == -1
+    tags: assert

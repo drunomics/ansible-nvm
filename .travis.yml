@@ -6,6 +6,7 @@ services:
   - docker
 env:
   - playbook: test-defaults.yml
+  - playbook: test-change.yml
 
 before_install:
   # Install Ansible.
