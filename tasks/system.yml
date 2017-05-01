@@ -3,6 +3,7 @@
   lineinfile: >
     dest="/etc/bash.bashrc" state=present regexp="nvm/nvm.sh"
     line='. {{ nvm_install_path }}/nvm.sh'
+    insertbefore=BOF
 
 - name: Add nvm bin dir to PATH
   lineinfile: >

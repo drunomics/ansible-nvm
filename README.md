@@ -30,6 +30,23 @@ Example Playbook
         - role: drunomics.nvm
           nvm_version: 0.33.2
           nvm_node_version: 6.10.*
+          
+Usage
+-----
+For npm and node executables to be found, nvm needs to alter the PATH. The role
+does so by altering ~/.bashrc. If system-wide installation is enabled, the 
+global bashrc and /etc/environment is adapted.
+
+However, ansible does not always pick the changed PATH variable up; e.g. when
+using the docker connection plugin. To make use of npm in ansible, the PATH
+variable must be adjusted accordingly. The role provides the fact `nvm_bin_dir`
+such that it can be done as follows:
+
+```
+  shell: echo "This works with every task."
+  environment:
+    PATH: "{{ nvm_bin_dir }}:{{ ansible_env.PATH }}"
+```
 
 License
 -------
